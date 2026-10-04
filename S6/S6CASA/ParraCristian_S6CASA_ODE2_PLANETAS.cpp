@@ -3,7 +3,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
-// Aún tiene errores.
+// Aún tiene errores aaaa.
 float Orbita_x(float xx, float yy, float GG, float M0=1){
     return - (GG * M0)/(std::pow((xx*xx + yy*yy),(3.0/2.0))) ;
 }
