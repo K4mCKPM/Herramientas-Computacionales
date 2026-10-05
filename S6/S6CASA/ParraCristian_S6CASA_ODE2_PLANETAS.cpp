@@ -1,40 +1,46 @@
 #include <fstream>
 #include <iostream>
-#include <vector>
+#include <array>
 #include <cmath>
 #include <string>
 // Aún tiene errores aaaa.
-double Orbita_x(double xx, double yy, double GG, double M0=1){
-    return - (GG * M0)/(std::pow((xx*xx + yy*yy),(3.0/2.0))) ;
+double Orbita_x(double uu, double ww, double GG, double M0=1){
+    // uu: Las coordenadas en donde se calcula la dirección, es decir,
+    // si es la coordenada x entonces es en dirección del vector unitario i.
+    // ww: La coordenada complementaria con la que se forma el vector r.
+    return - (GG * M0 * uu)/(std::pow((uu*uu + ww*ww),(3.0/2.0))); // Se calcula en la dirección de uu
 }
 
-double Euler_x(double yy, double vv, double hh){
-    // yy : El valor de la función en el paso n actual
+double Euler_U(double uu, double vv, double hh){
+    // uu : El valor de la función en el paso n actual
+    // vv : La primer derivada de la función en el paso n
     // hh : El tamaño de paso inicialmente definido
-    double yy_n1 = yy + hh*vv;
-  return yy_n1;
+    double uu_n1 = uu + hh*vv;
+  return uu_n1;
 }
 
-double Euler_v(double xx, double yy, double vv, double GG, double hh){
-    // yy : El valor de la función en el paso n actual
+double Euler_V(double uu, double ww, double vv, double GG, double hh){
+    // uu : El valor de la coordenada en el paso n actual
+    // vv : La primer derivada de la función en el paso n
+    // ww : El valor de la coordenada complementaria en el paso n
     // hh : El tamaño de paso inicialmente definido
-    double vv_n1 = vv + hh*Orbita_x(xx, yy, GG);
+    double vv_n1 = vv + hh*Orbita_x(uu, ww, GG);
   return vv_n1;
 }
 
-double X_Leap_Frog(double yy, double vv, double hh){
-    // yy : El valor de la función en el paso n actual
+double Leap_Frog_U(double uu, double vv, double hh){
+    // uu : El valor de la función en el paso n actual
     // vv : El valor de la velocidad en el paso n+1/2 actual
     // hh : El tamaño de paso inicialmente definido
-    double yy_n1 = yy + hh*vv;                // yy_n+1
-    return yy_n1;
+    double uu_n1 = uu + hh*vv;                // uu_n+1
+    return uu_n1;
 }
 
-double V_Leap_Frog(double yy_nn11, double vv, double GG, double hh){
-    // yy : El valor de la función en el paso n actual
+double Leap_Frog_V(double uu_nn12, double vv, double GG,double hh){
+    // uu : El valor de la función en el paso n actual
     // vv : El valor de la velocidad en el paso n+1/2 actual
     // hh : El tamaño de paso inicialmente definido
-    double vv_n32 = vv + hh*Orbita_x(yy_nn11, GG);   // vv_n+3/2
+    double vv_n32 = vv + hh*Orbita_x(uu_nn12, vv, GG);   // vv_n+3/2
     return vv_n32;
 }
 
@@ -43,47 +49,62 @@ int main(){
     double AU = 149597870700; // m
     double days = 86400;      //s
     double G = 6.67e-8;      // m^3 kg^-1 s^-2
-    double G_M0 = G*M*(1/std::pow(AU,3))*(days*days);       // m^3 M0 s^-2
+    double G_M0 = G*M*(1/std::pow(AU,3))*(days*days);       // UA^3 M0 days^-2
 
-    const int N = 20000;
-    int h = 0.0001;
+    const int N = 10000;
+    int h = 0.0002;
 
-    std::vector<double> x_Euler(N);
-    std::vector<double> y_Euler(N);
-    std::vector<double> vx_Euler(N);
-    std::vector<double> x_LF(N);
-    std::vector<double> vx_LF(N);
-    std::vector<double> t(N);
+    std::array<double, N> x_Euler;
+    std::array<double, N> y_Euler;
+    std::array<double, N> vx_Euler;
+    std::array<double, N> vy_Euler;
+
+    std::array<double, N> x_LF;
+    std::array<double, N> y_LF;
+    std::array<double, N> vx_LF;
+    std::array<double, N> vy_LF;
+
+    std::array<double, N> t;
 
     // Se escogen las condiciones iniciales
     double x0 = 1;
     double y0 = 0;
     double vx0 = 0.0;
+    double vy0 = 0.2;
+
     t[0] = 0;
     x_Euler[0] = x0;
     y_Euler[0] = y0;
     vx_Euler[0] = vx0;
+    vy_Euler[0] = vy0;
     x_LF[0] = x0;
-    vx_LF[0] = vx0 + (1.0/2.0) * h * Orbita_x(x0, 0, G_M0);
+    vx_LF[0] = vx0 + h * Orbita_x(x0, 0, G_M0)/2.0;
 
 
     for (int i = 0; i < N-1; i++){
         t[i+1] = (i+1)/(N*h);
-        x_Euler[i+1] = Euler_x(x_Euler[i], vx_Euler[i], h);
-        y_Euler[i+1] = Euler_x(y_Euler[i], vx_Euler[i], h);
-        vx_Euler[i+1] = Euler_v(x_Euler[i], y_Euler[i], vx_Euler[i], h);
-        x_LF[i+1] = X_Leap_Frog(x_LF[i], vx_LF[i], h);
-        vx_LF[i+1] = V_Leap_Frog(x_LF[i+1], vx_LF[i], h);
+        x_Euler[i+1] = Euler_U(x_Euler[i], vx_Euler[i], h);
+        y_Euler[i+1] = Euler_U(y_Euler[i], vy_Euler[i], h);
+
+        vx_Euler[i+1] = Euler_V(x_Euler[i], y_Euler[i], vx_Euler[i], G_M0, h);
+        vy_Euler[i+1] = Euler_V(y_Euler[i], x_Euler[i], vy_Euler[i], G_M0, h);
+
+        x_LF[i+1] = Leap_Frog_U(x_LF[i], vx_LF[i], h);
+        y_LF[i+1] = Leap_Frog_U(y_LF[i], vy_LF[i], h);
+
+        vx_LF[i+1] = Leap_Frog_V(x_LF[i+1], vx_LF[i], G_M0, h);
+        vy_LF[i+1] = Leap_Frog_V(y_LF[i+1], vy_LF[i], G_M0, h);
     }
 
-    // Se guardan los archivos en EDO2.dat
-    // El orden de las columnas es: tiempo , Euler x, Euler y, LeapFrog 
+    // Se guardan los archivos en Planetas.dat
+    // El orden de las columnas es: tiempo , Euler x, Euler y, LeapFrog x, LeapFrog y
     std::ofstream outfile;
-    outfile.open("EDO2.dat");
-    std::cout << ">>>Guardando los valores en 'PLANETAS.dat'" << std::endl;
+    outfile.open("Planetas.dat");
+    std::cout << ">>>Guardando los valores en 'Planetas.dat'" << std::endl;
 
-    for(int v=0; v<(N);v++){
-    outfile << t[v] << " , " << x_Euler[v] << " , " << y_Euler[v] << " , " << x_LF[v] << std::endl;
+    for(int p=0; p<(N);p++){
+    outfile << t[p] << " , " << x_Euler[p] << " , " << y_Euler[p] << " , " 
+    << x_LF[p] << " , " << y_LF[p]<< "\n";
     }
 
     outfile.close();
