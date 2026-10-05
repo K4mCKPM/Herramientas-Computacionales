@@ -4,7 +4,7 @@
 #include <cmath>
 #include <string>
 // Aún tiene errores aaaa.
-double Orbita_x(double uu, double ww, double GG, double M0=1){
+double Orbita_U(double uu, double ww, double GG, double M0=1){
     // uu: Las coordenadas en donde se calcula la dirección, es decir,
     // si es la coordenada x entonces es en dirección del vector unitario i.
     // ww: La coordenada complementaria con la que se forma el vector r.
@@ -24,7 +24,7 @@ double Euler_V(double uu, double ww, double vv, double GG, double hh){
     // vv : La primer derivada de la función en el paso n
     // ww : El valor de la coordenada complementaria en el paso n
     // hh : El tamaño de paso inicialmente definido
-    double vv_n1 = vv + hh*Orbita_x(uu, ww, GG);
+    double vv_n1 = vv + hh*Orbita_U(uu, ww, GG);
   return vv_n1;
 }
 
@@ -40,7 +40,7 @@ double Leap_Frog_V(double uu_nn12, double ww_nn12, double vv, double GG,double h
     // uu : El valor de la función en el paso n actual
     // vv : El valor de la velocidad en el paso n+1/2 actual
     // hh : El tamaño de paso inicialmente definido
-    double vv_n32 = vv + hh*Orbita_x(uu_nn12, ww_nn12, GG);   // vv_n+3/2
+    double vv_n32 = vv + hh*Orbita_U(uu_nn12, ww_nn12, GG);   // vv_n+3/2
     return vv_n32;
 }
 
@@ -63,7 +63,7 @@ int main(){
     std::array<double, N> vx_Euler;
     std::array<double, N> vy_Euler;
 
-    // Arrays para el método de Euler
+    // Arrays para el método de Leap Frog
     std::array<double, N> x_LF;
     std::array<double, N> y_LF;
     std::array<double, N> vx_LF;
@@ -71,6 +71,12 @@ int main(){
 
     // Caso 2 | Sol en movimiento:
     // Usaré el factor de escala M/Mtotal sobre los arrays anteriores
+
+    // Datos observacionales:
+    std::array<double, N> x_obs;
+    std::array<double, N> y_obs;
+    std::array<double, N> vx_obs;
+    std::array<double, N> vy_obs;
 
     // Array del tiempo
     std::array<double, N> t;
@@ -90,6 +96,11 @@ int main(){
     double fe_T = 1.0/(1.0 + Mt);    // Factor de escala para la tierra
     double fe_S = -Mt/(1.0 + Mt);     // Factor de escala para el sol
 
+    // Comparación órbita real:
+    double excentricidad = 0.01671022;      // Dato de Nasa Planetary Factsheet
+    double perihelio = 1.0*(1.0-excentricidad); // Suponiendo que se situa en el eje x
+    double vel_peri = 2.0*M_PI*std::sqrt((1.0+excentricidad)/(1.0-excentricidad)); // Velocidad inicial
+
     t[0] = 0;
     // Caso 1:
     x_Euler[0] = x0;
@@ -99,9 +110,15 @@ int main(){
     
     x_LF[0] = x0;
     y_LF[0] = y0;
-    vx_LF[0] = vx0 + h * Orbita_x(x0, y0, G_0)/2.0;
-    vy_LF[0] = vy0 + h * Orbita_x(y0, x0, G_0)/2.0;
+    vx_LF[0] = vx0 + h * Orbita_U(x0, y0, G_0)/2.0;
+    vy_LF[0] = vy0 + h * Orbita_U(y0, x0, G_0)/2.0;
 
+    // Datos observacionales:
+    x_obs[0] = perihelio;
+    y_obs[0] = y0;
+    vx_obs[0] = vx0 + h * Orbita_U(perihelio, y0, G_0)/2.0;
+    vy_obs[0] = vel_peri + h * Orbita_U(y0, perihelio, G_0)/2.0;
+    
     
     // Escritura de los arrays
     for (int i = 0; i < N-1; i++){
@@ -123,6 +140,13 @@ int main(){
         // Caso 2:
         // Aplico los factores de escala sobre los valores anteriores
         // en la escritura de "Planetas.dat" 
+
+        // Datos observacionales:
+        x_obs[i+1] = Leap_Frog_U(x_obs[i], vx_obs[i], h);
+        y_obs[i+1] = Leap_Frog_U(y_obs[i], vy_obs[i], h);
+
+        vx_obs[i+1] = Leap_Frog_V(x_obs[i+1], y_obs[i+1], vx_obs[i], G_0, h);
+        vy_obs[i+1] = Leap_Frog_V(y_obs[i+1], x_obs[i+1], vy_obs[i], G_0, h);
         }
 
     // Se guardan los archivos en Planetas.dat
@@ -130,6 +154,7 @@ int main(){
     // Caso 1 | tiempo , Euler x, Euler y, LeapFrog x, LeapFrog y.
     // Caso 2 | Euler x sol, Euler y sol, Euler x tierra, Euler y tierra
     // Leapfrog x sol, Leapfrog y sol, Leapfrog x tierra, Leapfrog y tierra.
+    // Observacionales | x observacional, y observacional.
 
     std::ofstream outfile;
     outfile.open("Planetas.dat");
@@ -142,7 +167,8 @@ int main(){
     << fe_S*x_Euler[p] << " , " << fe_S*y_Euler[p] << " , "
     << fe_T*x_Euler[p] << " , " << fe_T*y_Euler[p] << " , "
     << fe_S*x_LF[p] << " , " << fe_S*y_LF[p]<< " , "
-    << fe_T*x_LF[p] << " , " << fe_T*y_LF[p]<< "\n";
+    << fe_T*x_LF[p] << " , " << fe_T*y_LF[p]<< " , "
+    << x_obs[p] << " , " << y_obs[p]<< "\n";
     }
 
     outfile.close();
