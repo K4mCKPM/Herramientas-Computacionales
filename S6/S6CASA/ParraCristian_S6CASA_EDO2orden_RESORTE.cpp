@@ -99,25 +99,23 @@ int main(){
         vx_LF[i+1] = V_Leap_Frog(x_LF[i+1], vx_LF[i], h, m, k);
         Ax_Euler[i+1] = Euler_Ax(Ax_Euler[i], Avx_Euler[i], h);
         Avx_Euler[i+1] = Euler_Av(Ax_Euler[i], Avx_Euler[i], h, m, k, b);
-    }
 
-    // RK4 seguía sin funcionar dentro de una función, por eso ahora
-    // está dentro de un loop (Idea con ayuda de IA)
-    for (int k = 0; k < N-1; k++){
-      double k1_x = h*Avx_RK[k];
-      double k1_v = h*Amortiguado(Ax_RK[k], Avx_RK[k], m, k, b);
+        // RK4 seguía sin funcionar dentro de una función, por eso ahora
+        // está dentro del loop (Idea con ayuda de IA)
+        double k1_x = h*Avx_RK[i];
+        double k1_v = h*Amortiguado(Ax_RK[i], Avx_RK[i], m, k, b);
 
-      double k2_x = h*(Avx_RK[k] + k1_v/2);
-      double k2_v = h*Amortiguado(Ax_RK[k] + k1_x/2, Avx_RK[k] + k1_v/2, m, k, b);
-      
-      double k3_x = h*(Avx_RK[k] + k2_v/2);
-      double k3_v = h*Amortiguado(Ax_RK[k] + k2_x/2, Avx_RK[k] + k2_v/2, m, k, b);
-      
-      double k4_x = h*(Avx_RK[k] + k3_v);
-      double k4_v = h*Amortiguado(Ax_RK[k] + k3_x, Avx_RK[k] + k3_v, m, k, b);
-      
-      Ax_RK[k+1] = Ax_RK[k] + (k1_x + 2*k2_x + 2*k3_x + k4_x)/6.0;
-      Avx_RK[k+1] = Avx_RK[k] + (k1_v + 2*k2_v + 2*k3_v + k4_v)/6.0;
+        double k2_x = h*(Avx_RK[i] + k1_v/2);
+        double k2_v = h*Amortiguado(Ax_RK[i] + k1_x/2, Avx_RK[i] + k1_v/2, m, k, b);
+        
+        double k3_x = h*(Avx_RK[i] + k2_v/2);
+        double k3_v = h*Amortiguado(Ax_RK[i] + k2_x/2, Avx_RK[i] + k2_v/2, m, k, b);
+        
+        double k4_x = h*(Avx_RK[i] + k3_v);
+        double k4_v = h*Amortiguado(Ax_RK[i] + k3_x, Avx_RK[i] + k3_v, m, k, b);
+        
+        Ax_RK[i+1] = Ax_RK[i] + (k1_x + 2*k2_x + 2*k3_x + k4_x)/6.0;
+        Avx_RK[i+1] = Avx_RK[i] + (k1_v + 2*k2_v + 2*k3_v + k4_v)/6.0;
     }
 
     // Se guardan los archivos en EDO2.dat
