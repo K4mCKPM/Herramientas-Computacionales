@@ -159,6 +159,12 @@ int main(){
     outfile.open("Planetas.dat");
     std::cout << ">>>Guardando los valores en 'Planetas.dat'" << std::endl;
 
+    // Comentario con el nombre de las columnas
+    outfile << "#Tiempo, x Euler, y Euler, x LeapFrog, y Leapfrog, "
+    << "Sol x Euler, Sol y Euler, Tierra x Euler, Tierra y Euler, "
+    << "Sol x Leapfrog, Sol y Leapfrog, Tierra x Leapfrog, Tierra y Leapfrog, "
+    << "x Eliptica, y Eliptica" << "\n";
+
     for(int p=0; p<(N);p++){
     outfile << t[p] << " , " 
     << x_Euler[p] << " , " << y_Euler[p] << " , " 

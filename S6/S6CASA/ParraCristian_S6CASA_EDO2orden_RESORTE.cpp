@@ -125,6 +125,9 @@ int main(){
     outfile.open("EDO2.dat");
     std::cout << ">>>Guardando los valores en 'EDO2.dat'" << std::endl;
 
+    // Comentario con el nombre de las columnas
+    outfile << "#Tiempo, Euler, LeapFrog, Euler Amortiguado, RK4 Amortiguado" << "\n";
+
     for(int w=0; w<(N);w++){
     outfile << t[w] << " , " << x_Euler[w] << " , " << x_LF[w] 
     << " , " << Ax_Euler[w] << " , " << Ax_RK[w] << "\n";
