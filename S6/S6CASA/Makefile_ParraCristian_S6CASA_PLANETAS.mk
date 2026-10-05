@@ -1,4 +1,4 @@
-PLOTS_CristianParra_S6CASA_PLANETAS.png : PLOTS_CristianParra_S6CASA_ODE2_PLANETAS.py Planetas.dat
+PLOTS_CristianParra_S6CASA_PLANETAS_E.png : PLOTS_CristianParra_S6CASA_ODE2_PLANETAS.py Planetas.dat
 	python3 PLOTS_CristianParra_S6CASA_ODE2_PLANETAS.py
 
 Planetas.dat : ParraCristian_S6CASA_ODE2_PLANETAS.cpp
