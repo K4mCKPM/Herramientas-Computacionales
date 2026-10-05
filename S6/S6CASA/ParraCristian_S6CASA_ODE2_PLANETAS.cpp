@@ -106,8 +106,8 @@ int main(){
     double vx0 = 0.0;       // UA/año
     double vy0 = 2*M_PI;    // UA/año (suponiendo órbita circular)
 
-    double vy_t0 = vy0*M/(M+Mt);    // UA/año | Velocidad de la tierra
-    double vy_s0 = -vy0*Mt/(M+Mt);  // UA/año | Velocidad del sol
+    double vy_t0 = vy0*1/(1+Mt);    // UA/año | Velocidad de la tierra
+    double vy_s0 = -vy0*Mt/(1+Mt);  // UA/año | Velocidad del sol
 
     t[0] = 0;
     // Caso 1:
