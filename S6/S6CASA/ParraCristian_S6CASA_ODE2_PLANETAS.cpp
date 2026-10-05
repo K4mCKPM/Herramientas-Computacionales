@@ -45,14 +45,14 @@ double Leap_Frog_V(double uu_nn12, double vv, double GG,double hh){
 }
 
 int main(){
-    double M = 1.988475e30;  // kg
-    double AU = 149597870700; // m
-    double days = 86400;      //s
-    double G = 6.67e-8;      // m^3 kg^-1 s^-2
+    double M = 1.988475e30;     // kg
+    double AU = 1.49597870700e11; // m
+    double days = 86400;        //s
+    double G = 6.67e-8;         // m^3 kg^-1 s^-2
     double G_M0 = G*M*(1/std::pow(AU,3))*(days*days);       // UA^3 M0 days^-2
 
-    const int N = 10000;
-    int h = 0.0002;
+    const int N = 1000;
+    double h = 0.02;
 
     std::array<double, N> x_Euler;
     std::array<double, N> y_Euler;
@@ -70,19 +70,22 @@ int main(){
     double x0 = 1;
     double y0 = 0;
     double vx0 = 0.0;
-    double vy0 = 0.2;
+    double vy0 = 0.7;
 
     t[0] = 0;
     x_Euler[0] = x0;
     y_Euler[0] = y0;
     vx_Euler[0] = vx0;
     vy_Euler[0] = vy0;
+    
     x_LF[0] = x0;
-    vx_LF[0] = vx0 + h * Orbita_x(x0, 0, G_M0)/2.0;
+    y_LF[0] = y0;
+    vx_LF[0] = vx0 + h * Orbita_x(x0, y0, G_M0)/2.0;
+    vy_LF[0] = vy0 + h * Orbita_x(y0, x0, G_M0)/2.0;
 
 
     for (int i = 0; i < N-1; i++){
-        t[i+1] = (i+1)/(N*h);
+        t[i+1] = i/N;
         x_Euler[i+1] = Euler_U(x_Euler[i], vx_Euler[i], h);
         y_Euler[i+1] = Euler_U(y_Euler[i], vy_Euler[i], h);
 
