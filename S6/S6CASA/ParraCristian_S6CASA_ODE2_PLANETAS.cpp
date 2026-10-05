@@ -2,8 +2,7 @@
 #include <iostream>
 #include <array>
 #include <cmath>
-#include <string>
-// Aún tiene errores aaaa.
+
 double Orbita_U(double uu, double ww, double GG, double M0=1){
     // uu: Las coordenadas en donde se calcula la dirección, es decir,
     // si es la coordenada x entonces es en dirección del vector unitario i.
@@ -49,7 +48,7 @@ int main(){
     double Mt =  5.9742e24/M;       // kg | Masa de la tierra
     double AU = 1.49597870700e11;   // m  | Unidades Astronómicas (=1)
     double year = 31557600;         //s   | Años (=1)
-    double G = 6.67e-11;            // m^3 kg^-1 s^-2 | Constante de gravitación
+    double G = 6.67430e-11;            // m^3 kg^-1 s^-2 | Constante de gravitación
     double G_0 = G*M*(1/std::pow(AU,3))*(year*year); // UA^3 M0 year^-2
 
     // Condiciones de paso y cantidad de pasos
@@ -72,11 +71,11 @@ int main(){
     // Caso 2 | Sol en movimiento:
     // Usaré el factor de escala M/Mtotal sobre los arrays anteriores
 
-    // Datos observacionales:
-    std::array<double, N> x_obs;
-    std::array<double, N> y_obs;
-    std::array<double, N> vx_obs;
-    std::array<double, N> vy_obs;
+    // Datos órbita elíptica:
+    std::array<double, N> x_elip;
+    std::array<double, N> y_elip;
+    std::array<double, N> vx_elip;
+    std::array<double, N> vy_elip;
 
     // Array del tiempo
     std::array<double, N> t;
@@ -93,11 +92,11 @@ int main(){
 
     // Caso 2:
     // Factores de escala que multiplican la posición y la velocidad
-    double fe_T = 1.0/(1.0 + Mt);    // Factor de escala para la tierra
+    double fe_T = 1.0/(1.0 + Mt);     // Factor de escala para la tierra
     double fe_S = -Mt/(1.0 + Mt);     // Factor de escala para el sol
 
-    // Comparación órbita real:
-    double excentricidad = 0.01671022;      // Dato de Nasa Planetary Factsheet
+    // Comparación órbita real (elíptica):
+    double excentricidad = 0.01671022;          // Dato de Nasa Planetary Factsheet
     double perihelio = 1.0*(1.0-excentricidad); // Suponiendo que se situa en el eje x
     double vel_peri = 2.0*M_PI*std::sqrt((1.0+excentricidad)/(1.0-excentricidad)); // Velocidad inicial
 
@@ -113,11 +112,11 @@ int main(){
     vx_LF[0] = vx0 + h * Orbita_U(x0, y0, G_0)/2.0;
     vy_LF[0] = vy0 + h * Orbita_U(y0, x0, G_0)/2.0;
 
-    // Datos observacionales:
-    x_obs[0] = perihelio;
-    y_obs[0] = y0;
-    vx_obs[0] = vx0 + h * Orbita_U(perihelio, y0, G_0)/2.0;
-    vy_obs[0] = vel_peri + h * Orbita_U(y0, perihelio, G_0)/2.0;
+    // Datos órbita elíṕtica:
+    x_elip[0] = perihelio;
+    y_elip[0] = y0;
+    vx_elip[0] = vx0 + h * Orbita_U(perihelio, y0, G_0)/2.0;
+    vy_elip[0] = vel_peri + h * Orbita_U(y0, perihelio, G_0)/2.0;
     
     
     // Escritura de los arrays
@@ -141,12 +140,12 @@ int main(){
         // Aplico los factores de escala sobre los valores anteriores
         // en la escritura de "Planetas.dat" 
 
-        // Datos observacionales:
-        x_obs[i+1] = Leap_Frog_U(x_obs[i], vx_obs[i], h);
-        y_obs[i+1] = Leap_Frog_U(y_obs[i], vy_obs[i], h);
+        // Datos ŕbita elíptica:
+        x_elip[i+1] = Leap_Frog_U(x_elip[i], vx_elip[i], h);
+        y_elip[i+1] = Leap_Frog_U(y_elip[i], vy_elip[i], h);
 
-        vx_obs[i+1] = Leap_Frog_V(x_obs[i+1], y_obs[i+1], vx_obs[i], G_0, h);
-        vy_obs[i+1] = Leap_Frog_V(y_obs[i+1], x_obs[i+1], vy_obs[i], G_0, h);
+        vx_elip[i+1] = Leap_Frog_V(x_elip[i+1], y_elip[i+1], vx_elip[i], G_0, h);
+        vy_elip[i+1] = Leap_Frog_V(y_elip[i+1], x_elip[i+1], vy_elip[i], G_0, h);
         }
 
     // Se guardan los archivos en Planetas.dat
@@ -154,7 +153,7 @@ int main(){
     // Caso 1 | tiempo , Euler x, Euler y, LeapFrog x, LeapFrog y.
     // Caso 2 | Euler x sol, Euler y sol, Euler x tierra, Euler y tierra
     // Leapfrog x sol, Leapfrog y sol, Leapfrog x tierra, Leapfrog y tierra.
-    // Observacionales | x observacional, y observacional.
+    // Órbita elíptica | x elíptica, y elíptica.
 
     std::ofstream outfile;
     outfile.open("Planetas.dat");
@@ -168,7 +167,7 @@ int main(){
     << fe_T*x_Euler[p] << " , " << fe_T*y_Euler[p] << " , "
     << fe_S*x_LF[p] << " , " << fe_S*y_LF[p]<< " , "
     << fe_T*x_LF[p] << " , " << fe_T*y_LF[p]<< " , "
-    << x_obs[p] << " , " << y_obs[p]<< "\n";
+    << x_elip[p] << " , " << y_elip[p]<< "\n";
     }
 
     outfile.close();
