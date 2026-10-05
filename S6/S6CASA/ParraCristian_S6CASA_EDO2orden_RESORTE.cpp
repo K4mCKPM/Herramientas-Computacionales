@@ -3,108 +3,108 @@
 #include <array>
 #include <string>
 
-float Funcion(float yy, float mm, float kk){
+double Funcion(double yy, double mm, double kk){
     // La función a la que se le va a resolver la EDO de segundo orden d²y/dt² = f(y)
   return - (kk/mm) * yy;
 }
 
-float Amortiguado(float yy, float vv, float mm, float kk, float bb){
+double Amortiguado(double yy, double vv, double mm, double kk, double bb){
     // La función a la que se le va a resolver la EDO de segundo orden d²y/dt² = f(y)
   return - (kk/mm) * yy - bb*vv;
 }
 
-float Euler_x(float yy, float vv, float hh){
+double Euler_x(double yy, double vv, double hh){
     // yy : El valor de la función en el paso n actual
     // hh : El tamaño de paso inicialmente definido
-    float yy_n1 = yy + hh*vv;
+    double yy_n1 = yy + hh*vv;
   return yy_n1;
 }
 
-float Euler_v(float yy, float vv, float hh , float mm, float kk){
+double Euler_v(double yy, double vv, double hh , double mm, double kk){
     // yy : El valor de la función en el paso n actual
     // hh : El tamaño de paso inicialmente definido
-    float vv_n1 = vv + hh*Funcion(yy, mm, kk);
+    double vv_n1 = vv + hh*Funcion(yy, mm, kk);
   return vv_n1;
 }
 
-float Euler_Ax(float yy, float vv, float hh){
+double Euler_Ax(double yy, double vv, double hh){
     // yy : El valor de la función en el paso n actual
     // hh : El tamaño de paso inicialmente definido
-    float yy_n1 = yy + hh*vv;
+    double yy_n1 = yy + hh*vv;
   return yy_n1;
 }
 
-float Euler_Av(float yy, float vv, float hh, float mm, float kk, float bb){
+double Euler_Av(double yy, double vv, double hh, double mm, double kk, double bb){
     // yy : El valor de la función en el paso n actual
     // hh : El tamaño de paso inicialmente definido
-    float vv_n1 = vv + hh*Amortiguado(yy, vv, mm, kk, bb);
+    double vv_n1 = vv + hh*Amortiguado(yy, vv, mm, kk, bb);
   return vv_n1;
 }
 
-float X_Leap_Frog(float yy, float vv, float hh){
+double X_Leap_Frog(double yy, double vv, double hh){
     // yy : El valor de la función en el paso n actual
     // vv : El valor de la velocidad en el paso n+1/2 actual
     // hh : El tamaño de paso inicialmente definido
-    float yy_n1 = yy + hh*vv;                // yy_n+1
+    double yy_n1 = yy + hh*vv;                // yy_n+1
     return yy_n1;
 }
 
-float V_Leap_Frog(float yy_nn12, float vv, float hh, float mm, float kk){
+double V_Leap_Frog(double yy_nn12, double vv, double hh, double mm, double kk){
     // yy : El valor de la función en el paso n actual
     // vv : El valor de la velocidad en el paso n+1/2 actual
     // hh : El tamaño de paso inicialmente definido
-    float vv_n32 = vv + hh*Funcion(yy_nn12, mm, kk);   // vv_n+3/2
+    double vv_n32 = vv + hh*Funcion(yy_nn12, mm, kk);   // vv_n+3/2
     return vv_n32;
 }
 
-float RK4(float yy, float vv, float hh, float mm, float kk, float bb){
+double RK4(double yy, double vv, double hh, double mm, double kk, double bb){
   // yy : El valor de la función en el paso n actual
   // hh : El tamaño de paso inicialmente definido
-  float k1_x = hh*Amortiguado(yy, vv, mm, kk, bb);
-  float k2_x = hh*Amortiguado(yy + k1_x/2, vv, mm, kk, bb);
-  float k3_x = hh*Amortiguado(yy + k2_x/2, vv, mm, kk, bb);
-  float k4_x = hh*Amortiguado(yy + k3_x, vv, mm, kk, bb);
+  double k1_x = hh*Amortiguado(yy, vv, mm, kk, bb);
+  double k2_x = hh*Amortiguado(yy + k1_x/2, vv, mm, kk, bb);
+  double k3_x = hh*Amortiguado(yy + k2_x/2, vv, mm, kk, bb);
+  double k4_x = hh*Amortiguado(yy + k3_x, vv, mm, kk, bb);
   
-  float rk_x = yy + (1.0/6.0) * (k1_x + 2*k2_x + 2*k3_x + k4_x);
+  double rk_x = yy + (1.0/6.0) * (k1_x + 2*k2_x + 2*k3_x + k4_x);
 
   return rk_x;
 }
 
-float RK4_V_A(float yy, float vv, float hh, float mm, float kk, float bb){
+double RK4_V_A(double yy, double vv, double hh, double mm, double kk, double bb){
   // yy : El valor de la función en el paso n actual
   // hh : El tamaño de paso inicialmente definido
-  float k1_v = hh*Amortiguado(yy, vv, mm, kk, bb);
-  float k2_v = hh*Amortiguado(yy + k1_v/2, vv, mm, kk, bb);
-  float k3_v = hh*Amortiguado(yy + k2_v/2, vv, mm, kk, bb);
-  float k4_v = hh*Amortiguado(yy + k3_v, vv, mm, kk, bb);
+  double k1_v = hh*Amortiguado(yy, vv, mm, kk, bb);
+  double k2_v = hh*Amortiguado(yy + k1_v/2, vv, mm, kk, bb);
+  double k3_v = hh*Amortiguado(yy + k2_v/2, vv, mm, kk, bb);
+  double k4_v = hh*Amortiguado(yy + k3_v, vv, mm, kk, bb);
   
-  float rk_xv= vv + (1.0/6.0) * (k1_v + 2*k2_v + 2*k3_v + k4_v);
+  double rk_xv= vv + (1.0/6.0) * (k1_v + 2*k2_v + 2*k3_v + k4_v);
   return rk_xv;
 }
 
 int main(){
-    float m = 0.2;  // m
-    float k = 50.0;   // N/m
+    double m = 0.2;  // m
+    double k = 50.0;   // N/m
     const int N = 50000;
-    float t_final = 2.0;// s
+    double t_final = 2.0;// s
     double h = t_final/N;
-    float b = 0.08;
+    double b = 0.08;
 
     // Se inicializan los arreglos
-    std::array<float, N> x_Euler;
-    std::array<float, N> vx_Euler;
-    std::array<float, N> x_LF;
-    std::array<float, N> vx_LF;
+    std::array<double, N> x_Euler;
+    std::array<double, N> vx_Euler;
+    std::array<double, N> x_LF;
+    std::array<double, N> vx_LF;
 
-    std::array<float, N> Ax_Euler;   // Amortiguado
-    std::array<float, N> Avx_Euler;  // Amortiguado
-    std::array<float, N> Ax_RK;   // Amortiguado
-    std::array<float, N> Avx_RK;  // Amortiguado
-    std::array<float, N> t;
+    std::array<double, N> Ax_Euler;   // Amortiguado
+    std::array<double, N> Avx_Euler;  // Amortiguado
+    std::array<double, N> Ax_RK;   // Amortiguado
+    std::array<double, N> Avx_RK;  // Amortiguado
+    std::array<double, N> t;
     
     // Se escogen las condiciones iniciales
-    float x0 = 0.1;
-    float vx0 = 0.0;
+    double x0 = 0.1;
+    double vx0 = 0.0;
     t[0] = 0.0;
     x_Euler[0] = x0;
     vx_Euler[0] = vx0;
