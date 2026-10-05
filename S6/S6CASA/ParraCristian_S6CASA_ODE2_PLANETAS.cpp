@@ -70,35 +70,14 @@ int main(){
     std::array<double, N> vy_LF;
 
     // Caso 2 | Sol en movimiento:
-    // Arrays para el método de Euler
-    std::array<double, N> sol_x_Euler;
-    std::array<double, N> sol_y_Euler;
-    std::array<double, N> sol_vx_Euler;
-    std::array<double, N> sol_vy_Euler;
+    // Usaré el factor de escala M/Mtotal sobre los arrays anteriores
 
-    std::array<double, N> tierra_x_Euler;
-    std::array<double, N> tierra_y_Euler;
-    std::array<double, N> tierra_vx_Euler;
-    std::array<double, N> tierra_vy_Euler;
-
-    // Arrays para el método de Euler
-    std::array<double, N> sol_x_LF;
-    std::array<double, N> sol_y_LF;
-    std::array<double, N> sol_vx_LF;
-    std::array<double, N> sol_vy_LF;
-
-    std::array<double, N> tierra_x_LF;
-    std::array<double, N> tierra_y_LF;
-    std::array<double, N> tierra_vx_LF;
-    std::array<double, N> tierra_vy_LF;
-
+    // Array del tiempo
     std::array<double, N> t;
     
     // El caso 3 creo que toca con clases como dijo la profe,
     // lastimosamente no puedo dedicarle más tiempo al código.
-    // Y la decisión que tomé para el caso 2 expandió la longitud
-    // del código de una forma antinatural, intentaré regresar a este
-    // código para mejorarlo.
+    // Intentaré regresar a este código para mejorarlo.
 
     // Se escogen las condiciones iniciales
     double x0 = 1;  // UA
@@ -106,8 +85,10 @@ int main(){
     double vx0 = 0.0;       // UA/año
     double vy0 = 2*M_PI;    // UA/año (suponiendo órbita circular)
 
-    double vy_t0 = vy0*1/(1+Mt);    // UA/año | Velocidad de la tierra
-    double vy_s0 = -vy0*Mt/(1+Mt);  // UA/año | Velocidad del sol
+    // Caso 2:
+    // Factores de escala que multiplican la posición y la velocidad
+    double fe_T = 1.0/(1.0 + Mt);    // Factor de escala para la tierra
+    double fe_S = -Mt/(1.0 + Mt);     // Factor de escala para el sol
 
     t[0] = 0;
     // Caso 1:
@@ -121,26 +102,6 @@ int main(){
     vx_LF[0] = vx0 + h * Orbita_x(x0, y0, G_0)/2.0;
     vy_LF[0] = vy0 + h * Orbita_x(y0, x0, G_0)/2.0;
 
-    // Caso 2:
-    sol_x_Euler[0] = x0;
-    sol_y_Euler[0] = y0;
-    sol_vx_Euler[0] = vx0;
-    sol_vy_Euler[0] = vy_s0;
-    
-    sol_x_LF[0] = x0;
-    sol_y_LF[0] = y0;
-    sol_vx_LF[0] = vx0 + h * Orbita_x(x0, y0, G_0)/2.0;
-    sol_vy_LF[0] = vy_s0 + h * Orbita_x(y0, x0, G_0)/2.0;
-
-    tierra_x_Euler[0] = x0;
-    tierra_y_Euler[0] = y0;
-    tierra_vx_Euler[0] = vx0;
-    tierra_vy_Euler[0] = vy_t0;
-    
-    tierra_x_LF[0] = x0;
-    tierra_y_LF[0] = y0;
-    tierra_vx_LF[0] = vx0 + h * Orbita_x(x0, y0, G_0)/2.0;
-    tierra_vy_LF[0] = vy_t0 + h * Orbita_x(y0, x0, G_0)/2.0;
     
     // Escritura de los arrays
     for (int i = 0; i < N-1; i++){
@@ -160,26 +121,9 @@ int main(){
         vy_LF[i+1] = Leap_Frog_V(y_LF[i+1], x_LF[i+1], vy_LF[i], G_0, h);
 
         // Caso 2:
-        sol_x_Euler[i+1] = Euler_U(sol_x_Euler[i], sol_vx_Euler[i], h);
-        sol_y_Euler[i+1] = Euler_U(sol_y_Euler[i], sol_vy_Euler[i], h);
-        tierra_x_Euler[i+1] = Euler_U(tierra_x_Euler[i], tierra_vx_Euler[i], h);
-        tierra_y_Euler[i+1] = Euler_U(tierra_y_Euler[i], tierra_vy_Euler[i], h);
-
-        sol_vx_Euler[i+1] = Euler_V(sol_x_Euler[i], sol_y_Euler[i], sol_vx_Euler[i], G_0, h);
-        sol_vy_Euler[i+1] = Euler_V(sol_y_Euler[i], sol_x_Euler[i], sol_vy_Euler[i], G_0, h);
-        tierra_vx_Euler[i+1] = Euler_V(tierra_x_Euler[i], tierra_y_Euler[i], tierra_vx_Euler[i], G_0, h);
-        tierra_vy_Euler[i+1] = Euler_V(tierra_y_Euler[i], tierra_x_Euler[i], tierra_vy_Euler[i], G_0, h);
-
-        sol_x_LF[i+1] = Leap_Frog_U(sol_x_LF[i], sol_vx_LF[i], h);
-        sol_y_LF[i+1] = Leap_Frog_U(sol_y_LF[i], sol_vy_LF[i], h);
-        tierra_x_LF[i+1] = Leap_Frog_U(tierra_x_LF[i], tierra_vx_LF[i], h);
-        tierra_y_LF[i+1] = Leap_Frog_U(tierra_y_LF[i], tierra_vy_LF[i], h);
-
-        sol_vx_LF[i+1] = Leap_Frog_V(sol_x_LF[i+1], sol_y_LF[i+1], sol_vx_LF[i], G_0, h);
-        sol_vy_LF[i+1] = Leap_Frog_V(sol_y_LF[i+1], sol_x_LF[i+1], sol_vy_LF[i], G_0, h);
-        tierra_vx_LF[i+1] = Leap_Frog_V(tierra_x_LF[i+1], tierra_y_LF[i+1], tierra_vx_LF[i], G_0, h);
-        tierra_vy_LF[i+1] = Leap_Frog_V(tierra_y_LF[i+1], tierra_x_LF[i+1], tierra_vy_LF[i], G_0, h);
-    }
+        // Aplico los factores de escala sobre los valores anteriores
+        // en la escritura de "Planetas.dat" 
+        }
 
     // Se guardan los archivos en Planetas.dat
     // El orden de las columnas es: 
@@ -195,10 +139,10 @@ int main(){
     outfile << t[p] << " , " 
     << x_Euler[p] << " , " << y_Euler[p] << " , " 
     << x_LF[p] << " , " << y_LF[p]<< " , "
-    << sol_x_Euler[p] << " , " << sol_y_Euler[p] << " , " 
-    << tierra_x_Euler[p] << " , " << tierra_y_Euler[p] << " , "
-    << sol_x_LF[p] << " , " << sol_y_LF[p]<< " , "
-    << tierra_x_LF[p] << " , " << tierra_y_LF[p]<< "\n";
+    << fe_S*x_Euler[p] << " , " << fe_S*y_Euler[p] << " , "
+    << fe_T*x_Euler[p] << " , " << fe_T*y_Euler[p] << " , "
+    << fe_S*x_LF[p] << " , " << fe_S*y_LF[p]<< " , "
+    << fe_T*x_LF[p] << " , " << fe_T*y_LF[p]<< "\n";
     }
 
     outfile.close();
