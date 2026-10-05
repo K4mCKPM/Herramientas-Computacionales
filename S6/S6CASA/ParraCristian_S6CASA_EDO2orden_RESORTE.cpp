@@ -4,44 +4,44 @@
 #include <string>
 
 double Funcion(double yy, double mm, double kk){
-    // La función a la que se le va a resolver la EDO de segundo orden d²y/dt² = f(y)
+    // La función a la que se le va a resolver la EDO de segundo orden d²y/dt² = -k/m y
   return - (kk/mm) * yy;
 }
 
 double Amortiguado(double yy, double vv, double mm, double kk, double bb){
-    // La función a la que se le va a resolver la EDO de segundo orden d²y/dt² = f(y)
+    // La función a la que se le va a resolver la EDO de segundo orden d²y/dt² = -k/m y - b dy/dt
   return - (kk/mm) * yy - bb*vv;
 }
 
-double Euler_x(double yy, double vv, double hh){
+double Euler_X(double yy, double vv, double hh){
     // yy : El valor de la función en el paso n actual
     // hh : El tamaño de paso inicialmente definido
     double yy_n1 = yy + hh*vv;
   return yy_n1;
 }
 
-double Euler_v(double yy, double vv, double hh , double mm, double kk){
+double Euler_V(double yy, double vv, double hh , double mm, double kk){
     // yy : El valor de la función en el paso n actual
     // hh : El tamaño de paso inicialmente definido
     double vv_n1 = vv + hh*Funcion(yy, mm, kk);
   return vv_n1;
 }
 
-double Euler_Ax(double yy, double vv, double hh){
+double Euler_X_A(double yy, double vv, double hh){
     // yy : El valor de la función en el paso n actual
     // hh : El tamaño de paso inicialmente definido
     double yy_n1 = yy + hh*vv;
   return yy_n1;
 }
 
-double Euler_Av(double yy, double vv, double hh, double mm, double kk, double bb){
+double Euler_V_A(double yy, double vv, double hh, double mm, double kk, double bb){
     // yy : El valor de la función en el paso n actual
     // hh : El tamaño de paso inicialmente definido
     double vv_n1 = vv + hh*Amortiguado(yy, vv, mm, kk, bb);
   return vv_n1;
 }
 
-double X_Leap_Frog(double yy, double vv, double hh){
+double Leap_Frog_X(double yy, double vv, double hh){
     // yy : El valor de la función en el paso n actual
     // vv : El valor de la velocidad en el paso n+1/2 actual
     // hh : El tamaño de paso inicialmente definido
@@ -49,7 +49,7 @@ double X_Leap_Frog(double yy, double vv, double hh){
     return yy_n1;
 }
 
-double V_Leap_Frog(double yy_nn12, double vv, double hh, double mm, double kk){
+double Leap_Frog_V(double yy_nn12, double vv, double hh, double mm, double kk){
     // yy : El valor de la función en el paso n actual
     // vv : El valor de la velocidad en el paso n+1/2 actual
     // hh : El tamaño de paso inicialmente definido
@@ -60,10 +60,10 @@ double V_Leap_Frog(double yy_nn12, double vv, double hh, double mm, double kk){
 int main(){
     double m = 0.2;  // m
     double k = 50.0;   // N/m
-    const int N = 5000;
-    double t_final = 2.0;// s
+    const int N = 10000;
+    const double t_final = 2.0;// s
     double h = t_final/N;
-    double b = 0.08;
+    double b = 0.8;
 
     // Se inicializan los arreglos
     std::array<double, N> x_Euler;
@@ -93,12 +93,12 @@ int main(){
     // Escribo los valores de todos los arreglos
     for (int i = 0; i < N-1; i++){
         t[i+1] = (i+1)*h;
-        x_Euler[i+1] = Euler_x(x_Euler[i], vx_Euler[i], h);
-        vx_Euler[i+1] = Euler_v(x_Euler[i], vx_Euler[i], h, m, k);
-        x_LF[i+1] = X_Leap_Frog(x_LF[i], vx_LF[i], h);
-        vx_LF[i+1] = V_Leap_Frog(x_LF[i+1], vx_LF[i], h, m, k);
-        Ax_Euler[i+1] = Euler_Ax(Ax_Euler[i], Avx_Euler[i], h);
-        Avx_Euler[i+1] = Euler_Av(Ax_Euler[i], Avx_Euler[i], h, m, k, b);
+        x_Euler[i+1] = Euler_X(x_Euler[i], vx_Euler[i], h);
+        vx_Euler[i+1] = Euler_V(x_Euler[i], vx_Euler[i], h, m, k);
+        x_LF[i+1] = Leap_Frog_X(x_LF[i], vx_LF[i], h);
+        vx_LF[i+1] = Leap_Frog_V(x_LF[i+1], vx_LF[i], h, m, k);
+        Ax_Euler[i+1] = Euler_X_A(Ax_Euler[i], Avx_Euler[i], h);
+        Avx_Euler[i+1] = Euler_V_A(Ax_Euler[i], Avx_Euler[i], h, m, k, b);
 
         // RK4 seguía sin funcionar dentro de una función, por eso ahora
         // está dentro del loop (Idea con ayuda de IA)
@@ -119,13 +119,15 @@ int main(){
     }
 
     // Se guardan los archivos en EDO2.dat
-    // El orden de las columnas es: tiempo , Euler , LeapFrog, Euler Amortiguado, RK4 amortiguado
+    // El orden de las columnas es: tiempo , Euler , LeapFrog,
+    // Euler Amortiguado, RK4 amortiguado
     std::ofstream outfile;
     outfile.open("EDO2.dat");
     std::cout << ">>>Guardando los valores en 'EDO2.dat'" << std::endl;
 
-    for(int v=0; v<(N);v++){
-    outfile << t[v] << " , " << x_Euler[v] << " , " << x_LF[v] << " , " << Ax_Euler[v] << " , " << Ax_RK[v] << "\n";
+    for(int w=0; w<(N);w++){
+    outfile << t[w] << " , " << x_Euler[w] << " , " << x_LF[w] 
+    << " , " << Ax_Euler[w] << " , " << Ax_RK[w] << "\n";
     }
 
     outfile.close();
