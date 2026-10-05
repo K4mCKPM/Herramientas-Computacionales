@@ -20,6 +20,7 @@ fig1, ax1 = plt.subplots(figsize=(10,6))
 
 # Gráfica del resorte
 ax0.plot(x_Euler, y_Euler, label="Órbita con Euler", ls = "--", color = "crimson")
+ax0.scatter(0, 0, s = 422, color = "orange", label = "Sol")
 ax0.axis("equal")
 ax0.set_xlabel("x (UA)")
 ax0.set_ylabel("y (UA)")
@@ -29,6 +30,7 @@ fig0.savefig("PLOTS_CristianParra_S6CASA_ODE2_Planetas_E.png")
 
 # Gráfica del resorte amortiguado
 ax1.plot(x_LeapFrog, y_LeapFrog, label="Órbita con Leap Frog", ls = ":", color = "indigo")
+ax1.scatter(0, 0, s = 422, color = "orange", label = "Sol")
 ax1.axis("equal")
 ax1.set_xlabel("x (UA)")
 ax1.set_ylabel("y (UA)")
