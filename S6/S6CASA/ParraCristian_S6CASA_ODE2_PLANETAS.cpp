@@ -53,7 +53,7 @@ int main(){
     double G_0 = G*M*(1/std::pow(AU,3))*(year*year); // UA^3 M0 year^-2
 
     // Condiciones de paso y cantidad de pasos
-    const int N = 2000;
+    const int N = 1827;     // ~ 5 años
     double h = 1.0/365.25;
 
     // Caso 1 | Sol estático:
