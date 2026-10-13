@@ -3,24 +3,26 @@
 #include <array>
 #include <cmath>
 
-// No alcancé a aplicar los movimientos a los planetas
-class Planetas{
-    public:
-        double mass;    // Masa del planeta
-        double posx;    // Distancia "horizontal" al Sol del planeta
-        double posy;    // Distancia "horizontal" al Sol del planeta
-        double velx;    // Velocidad de orbita "horizontal"
-        double vely;    // Velocidad de orbita "vertical"
+// Intentaré lograr el funcionamiento de los varios planetas como "hobby", dejo comentada la parte que logré
+// definir, pero que no afecta al resto del código
 
-        Planetas(double mm, double px, double py, double vx){
-            double G = 4*M_PI*M_PI;     // En unidades de Años, UA, Masas solares
-            mass = mm;
-            posx = px;
-            posy = py;
-            velx = vx;
-            vely = std::sqrt(G/px);     // v = sqrt( G * M_sol / R), tomando M_sol = 1.
-        }
-};
+//class Planetas{
+//    public:
+//        double mass;    // Masa del planeta
+//        double posx;    // Distancia "horizontal" al Sol del planeta
+//        double posy;    // Distancia "horizontal" al Sol del planeta
+//        double velx;    // Velocidad de orbita "horizontal"
+//        double vely;    // Velocidad de orbita "vertical"
+//
+//        Planetas(double mm, double px, double py, double vx){
+//            double G = 4*M_PI*M_PI;     // En unidades de Años, UA, Masas solares
+//            mass = mm;
+//            posx = px;
+//            posy = py;
+//            velx = vx;
+//            vely = std::sqrt(G/px);     // v = sqrt( G * M_sol / R), tomando M_sol = 1.
+//        }
+//};
 
 double Orbita_U(double uu, double ww, double GG, double M0=1){
     // uu: Las coordenadas en donde se calcula la dirección, es decir,
@@ -71,17 +73,16 @@ int main(){
     double G_0 = G*M*(1/std::pow(AU,3))*(year*year); // UA^3 M0 year^-2 | Es igual a 4*Pi^2.
     
     // Condiciones iniciales
-    Planetas Mercurio(0.330e24/M, 57.9e6/AU  , 0, 0.0);
-    Planetas Venus(4.87e24/M    , 108.2e6/AU , 0, 0.0);
-    Planetas Tierra(5.9742e24/M , 1          , 0, 0.0);
-    Planetas Marte(0.642e24/M   , 228.0e6/AU , 0, 0.0);
-    Planetas Jupiter(1898e24/M  , 778.5e6/AU , 0, 0.0);
-    Planetas Saturno(568e24/M   , 1432.0e6/AU, 0, 0.0);
-    Planetas Urano(86.8e24/M    , 2867.0e6/AU, 0, 0.0);
-    Planetas Neptuno(102e24/M   , 4515.0e6/AU, 0, 0.0);
-    Planetas Pluton(0.0130e24/M , 5906.4e6/AU, 0, 0.0);
+    //Planetas Mercurio(0.330e24/M, 57.9e6/AU  , 0, 0.0);
+    //Planetas Venus(4.87e24/M    , 108.2e6/AU , 0, 0.0);
+    //Planetas Tierra(5.9742e24/M , 1          , 0, 0.0);
+    //Planetas Marte(0.642e24/M   , 228.0e6/AU , 0, 0.0);
+    //Planetas Jupiter(1898e24/M  , 778.5e6/AU , 0, 0.0);
+    //Planetas Saturno(568e24/M   , 1432.0e6/AU, 0, 0.0);
+    //Planetas Urano(86.8e24/M    , 2867.0e6/AU, 0, 0.0);
+    //Planetas Neptuno(102e24/M   , 4515.0e6/AU, 0, 0.0);
+    //Planetas Pluton(0.0130e24/M , 5906.4e6/AU, 0, 0.0);
 
-    std::cout << Tierra.mass << Tierra.posx << Tierra.posy << Tierra.velx << Tierra.vely << "\n";
     // Condiciones de paso y cantidad de pasos
     const int N = 1827;     // ~ 5 años
     double h = 1.0/365.25;
@@ -110,10 +111,6 @@ int main(){
 
     // Array del tiempo
     std::array<double, N> t;
-    
-    // El caso 3 creo que toca con clases como dijo la profe,
-    // lastimosamente no puedo dedicarle más tiempo al código.
-    // Intentaré regresar a este código para mejorarlo.
 
     // Se escogen las condiciones iniciales
     double x0 = 1;  // UA
