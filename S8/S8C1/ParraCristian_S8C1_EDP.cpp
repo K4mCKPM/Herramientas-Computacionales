@@ -36,6 +36,8 @@ int main(){
     for (int i = 1; i<N-1; i++){
         u_pres[i] = u_pas[i] + 0.5*c*c*delta_t*delta_t*(u_pas[i+1] - 2*u_pas[i] + u_pas[i-1])/(delta_x*delta_x);
     }
+    u_pres[0] = 0.0;
+    u_pres[N-1] = 0.0;
     
     // Se guardan los archivos en EDP.dat
     // El orden de las columnas es: 
