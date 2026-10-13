@@ -11,7 +11,7 @@ for i in range(len(Datos[0])):
 
 fig, ax = plt.subplots(figsize=(14,6))
 for i in range(len(Datos)):
-    if i%1== 0:
+    if i%14 == 0:
         ax.plot(tiempo, Datos[i, :])
 
 plt.title("Evolución de la onda en el tiempo")
