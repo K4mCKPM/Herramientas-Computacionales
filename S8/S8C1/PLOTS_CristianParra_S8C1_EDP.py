@@ -11,11 +11,13 @@ for i in range(len(Datos[0])):
 
 fig, ax = plt.subplots(figsize=(14,6))
 for i in range(len(Datos)):
-    ax.plot(tiempo, Datos[i, :])
+    if i%1== 0:
+        ax.plot(tiempo, Datos[i, :])
 
 plt.title("Evolución de la onda en el tiempo")
 plt.xlabel("Posición (m)")
 plt.ylabel("Altura (m)")
 plt.ylim(-0.15, 0.15)
+
 fig.savefig("PLOTS_CristianParra_S8C1_EDP.png")
 print(">>>Guardando la gráfica en 'PLOTS_CristianParra_S8C1_EDP.png'")

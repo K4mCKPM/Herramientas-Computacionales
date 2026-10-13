@@ -3,14 +3,15 @@
 #include <array>
 #include <cmath>
 
-// No logré que la cuerda bajara a alturas negativas.
+// Actualicé el archivo de la entrega anterior, por alguna razón estaba actualizando
+// 'u_pas' y 'u_pres' dentro de un ciclo, por lo que no funcionaba correctamente.
 
 int main(){
     // Condiciones iniciales
     const int c = 300;
     const int L = 2;
     const int N = 101; // Cantidad de puntos
-    const int T = 100000; // Pasos temporales
+    const int T = 1000; // Pasos temporales
     double h = 0.1; // Altura inicial
     double v = 0.0; // Velocidad inicial | No la he aplicado
     double t_final = 0.1;
@@ -55,18 +56,17 @@ int main(){
         }
         
         // Guardar algunos arreglos "pasado" en 'EDP.dat'
-        if (k%100 == 0){
+        if (k%11 == 0){
             for(int p=0; p<(N-1);p++){
             outfile << u_pas[p] << "," ;
             }
 
             outfile << u_pas[N-1] << std::endl;
         }   
+
         // Actualizar los arreglos
-        for (int i = 0; i<N; i++){
-            u_pas = u_pres;
-            u_pres = u_fut;
-        }
+        u_pas = u_pres;
+        u_pres = u_fut;
     }
     
     // Se termina de escribir el archivo
