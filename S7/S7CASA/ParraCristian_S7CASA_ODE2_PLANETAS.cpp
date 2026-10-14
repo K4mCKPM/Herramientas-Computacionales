@@ -31,37 +31,22 @@ double Orbita_U(double uu, double ww, double GG, double M0=1){
     return - (GG * M0 * uu)/(std::pow((uu*uu + ww*ww),(3.0/2.0))); // Se calcula en la dirección de uu
 }
 
-double Euler_U(double uu, double vv, double hh){
+std::array<double, 2> Euler(double uu, double ww, double vv, double GG, double hh){
     // uu : El valor de la función en el paso n actual
-    // vv : La primer derivada de la función en el paso n
+    // vv ; El valor de la velocidad en el paso n actual
     // hh : El tamaño de paso inicialmente definido
     double uu_n1 = uu + hh*vv;
-  return uu_n1;
-}
-
-double Euler_V(double uu, double ww, double vv, double GG, double hh){
-    // uu : El valor de la coordenada en el paso n actual
-    // vv : La primer derivada de la función en el paso n
-    // ww : El valor de la coordenada complementaria en el paso n
-    // hh : El tamaño de paso inicialmente definido
     double vv_n1 = vv + hh*Orbita_U(uu, ww, GG);
-  return vv_n1;
+    return {uu_n1, vv_n1};
 }
 
-double Leap_Frog_U(double uu, double vv, double hh){
+std::array<double, 2> Leap_Frog(double uu, double ww, double vv, double GG, double hh){
     // uu : El valor de la función en el paso n actual
     // vv : El valor de la velocidad en el paso n+1/2 actual
     // hh : El tamaño de paso inicialmente definido
     double uu_n1 = uu + hh*vv;                // uu_n+1
-    return uu_n1;
-}
-
-double Leap_Frog_V(double uu_nn12, double ww_nn12, double vv, double GG,double hh){
-    // uu : El valor de la función en el paso n actual
-    // vv : El valor de la velocidad en el paso n+1/2 actual
-    // hh : El tamaño de paso inicialmente definido
-    double vv_n32 = vv + hh*Orbita_U(uu_nn12, ww_nn12, GG);   // vv_n+3/2
-    return vv_n32;
+    double vv_n32 = vv + hh*Orbita_U(uu_n1, ww, GG);   // vv_n+3/2
+    return {uu_n1, vv_n32};
 }
 
 int main(){
@@ -152,28 +137,28 @@ int main(){
         t[i+1] = t[i] + h;
 
         // Caso 1:
-        x_Euler[i+1] = Euler_U(x_Euler[i], vx_Euler[i], h);
-        y_Euler[i+1] = Euler_U(y_Euler[i], vy_Euler[i], h);
+        x_Euler[i+1] = Euler(x_Euler[i], y_Euler[i], vx_Euler[i], G_0, h)[0];
+        y_Euler[i+1] = Euler(y_Euler[i], x_Euler[i], vy_Euler[i], G_0, h)[0];
 
-        vx_Euler[i+1] = Euler_V(x_Euler[i], y_Euler[i], vx_Euler[i], G_0, h);
-        vy_Euler[i+1] = Euler_V(y_Euler[i], x_Euler[i], vy_Euler[i], G_0, h);
+        vx_Euler[i+1] = Euler(x_Euler[i], y_Euler[i], vx_Euler[i], G_0, h)[1];
+        vy_Euler[i+1] = Euler(y_Euler[i], x_Euler[i], vy_Euler[i], G_0, h)[1];
 
-        x_LF[i+1] = Leap_Frog_U(x_LF[i], vx_LF[i], h);
-        y_LF[i+1] = Leap_Frog_U(y_LF[i], vy_LF[i], h);
+        x_LF[i+1] = Leap_Frog(x_LF[i], y_LF[i+1], vx_LF[i], G_0, h)[0];
+        y_LF[i+1] = Leap_Frog(y_LF[i], x_LF[i+1], vy_LF[i], G_0, h)[0];
 
-        vx_LF[i+1] = Leap_Frog_V(x_LF[i+1], y_LF[i+1], vx_LF[i], G_0, h);
-        vy_LF[i+1] = Leap_Frog_V(y_LF[i+1], x_LF[i+1], vy_LF[i], G_0, h);
+        vx_LF[i+1] = Leap_Frog(x_LF[i], y_LF[i+1], vx_LF[i], G_0, h)[1];
+        vy_LF[i+1] = Leap_Frog(y_LF[i], x_LF[i+1], vy_LF[i], G_0, h)[1];
 
         // Caso 2:
         // Aplico los factores de escala sobre los valores anteriores
         // en la escritura de "Planetas.dat" 
 
         // Datos ŕbita elíptica:
-        x_elip[i+1] = Leap_Frog_U(x_elip[i], vx_elip[i], h);
-        y_elip[i+1] = Leap_Frog_U(y_elip[i], vy_elip[i], h);
+        x_elip[i+1] = Leap_Frog(x_elip[i], y_elip[i+1], vx_elip[i], G_0, h)[0];
+        y_elip[i+1] = Leap_Frog(y_elip[i], x_elip[i+1], vy_elip[i], G_0, h)[0];
 
-        vx_elip[i+1] = Leap_Frog_V(x_elip[i+1], y_elip[i+1], vx_elip[i], G_0, h);
-        vy_elip[i+1] = Leap_Frog_V(y_elip[i+1], x_elip[i+1], vy_elip[i], G_0, h);
+        vx_elip[i+1] = Leap_Frog(x_elip[i], y_elip[i+1], vx_elip[i], G_0, h)[1];
+        vy_elip[i+1] = Leap_Frog(y_elip[i], x_elip[i+1], vy_elip[i], G_0, h)[1];
         }
 
     // Se guardan los archivos en Planetas.dat
