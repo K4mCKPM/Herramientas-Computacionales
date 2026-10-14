@@ -92,8 +92,9 @@ def update(frame):
 
     return (line1, line2, line3, line4, scatter0, scatter1)
 
+print(">>>Iniciando la animación para la órbita de la tierra")
 ani1 = animation.FuncAnimation(fig=fig1, func=update, frames=range(0,len(eliptica_x), 40))
-ani1.save("PLOTS_CristianParra_S7C1_ODE2_Planetas_Tierra.gif", writer="pillow", fps=10)
+ani1.save("PLOTS_CristianParra_S7CASA_ODE2_Planetas_Tierra.gif", writer="pillow", fps=10)
 print(">>>Guardando la animación para la órbita de la tierra")
 
 #--- Caso 2 | Sol moviendose:
@@ -175,6 +176,7 @@ def update1(frame):
 
     return (line5, line6, line7, line8,  line9, line10, scatter2, scatter3, scatter4, scatter5)
 
+print(">>>Iniciando la animación para las órbitas de la tierra y del sol movil")
 ani2 = animation.FuncAnimation(fig=fig2, func=update1, frames=range(0,len(eliptica_x), 40))
-ani2.save("PLOTS_CristianParra_S7C1_ODE2_Planetas_Sol.gif", writer="pillow", fps=10)
-print(">>>Guardando la animación para la órbita de la tierra y del sol movil")
+ani2.save("PLOTS_CristianParra_S7CASA_ODE2_Planetas_Sol.gif", writer="pillow", fps=10)
+print(">>>Guardando la animación para las órbitas de la tierra y del sol movil")
