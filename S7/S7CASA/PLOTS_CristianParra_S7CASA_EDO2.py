@@ -40,6 +40,7 @@ ax0.set_ylabel("Funcion x")
 ax0.set_title(f"EDO 2do orden resorte (k = {k}, m = {m}, b = 0, h = {h})")
 ax0.legend()
 fig0.savefig("PLOTS_CristianParra_S6CASA_EDO2_RESORTE.png")
+print(">>>Guardando el gráfico del resorte sin amortiguamiento")
 
 # Gráfica del resorte amortiguado
 ax1.plot(tiempo, analitica_A, label="x Analítica Amortiguado", color = "limegreen")
@@ -50,3 +51,4 @@ ax1.set_ylabel("Funcion x")
 ax1.set_title(f"EDO 2do orden amortiguado (k = {k}, m = {m}, b = {b}, h = {h})")
 ax1.legend()
 fig1.savefig("PLOTS_CristianParra_S6CASA_EDO2_AMORTIGUADO.png")
+print(">>>Guardando el gráfico del resorte con amortiguamiento")
