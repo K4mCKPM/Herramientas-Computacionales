@@ -18,13 +18,15 @@ C2 = 0.05*b/omega
 
 # División de cada tipo de dato en arreglos separados
 tiempo = Datos[:-1,0]
+
+# Datos del caso sin amortiguamiento
 x_Euler = Datos[:-1,1]
 x_LeapFrog = Datos[:-1,2]
 analitica = C1*np.cos(np.sqrt(k/m) * tiempo)
 
 # Datos del caso amortiguado
-x_Euler_A = Datos[:-1,3]  #Amortiguado
-x_RK4_A = Datos[:-1,4]    #Amortiguado
+x_Euler_A = Datos[:-1,3]
+x_RK4_A = Datos[:-1,4] 
 analitica_A = np.exp(-(b/2) * tiempo) * (C1*np.cos(omega * tiempo) + C2*np.sin(omega * tiempo))
 
 # Inicialización gráficas
