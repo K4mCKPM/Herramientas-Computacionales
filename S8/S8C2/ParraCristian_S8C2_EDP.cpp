@@ -74,7 +74,6 @@ int main(){
         }   
 
         // Actualizar los arreglos (matrices) para el siguiente paso
-        T_p = T_p;
         T_p = T_f;
     }
     
