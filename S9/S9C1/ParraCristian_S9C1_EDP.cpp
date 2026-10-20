@@ -13,7 +13,7 @@ const double V = 1e-4; // Coeficiente de difusión
 const int L = 1;
 const int N = 10; // Cantidad de puntos en una dimensión de la red (10X10)
 const int T = 130; // Pasos temporales
-double t_final = 2600.0;
+double t_final = 26000.0;
 
 // Tomando delta_y igual a delta_x se reduce la complejidad del código.
 double delta_x = 0.1;
