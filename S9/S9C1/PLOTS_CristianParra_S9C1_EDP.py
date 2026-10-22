@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 # Parámetros del modelo
 V = 0.0001
 L = 1
-N = 10
-T = 130
+N = 100
+T = 13000
 delta_x = 0.1
 delta_t = 20
 

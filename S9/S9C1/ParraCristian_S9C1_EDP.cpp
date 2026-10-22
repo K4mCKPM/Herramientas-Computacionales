@@ -11,8 +11,8 @@
 // Condiciones iniciales
 const double V = 1e-4; // Coeficiente de difusión
 const int L = 1;
-const int N = 10; // Cantidad de puntos en una dimensión de la red (10X10)
-const int T = 130; // Pasos temporales
+const int N = 100; // Cantidad de puntos en una dimensión de la red (10X10)
+const int T = 13000; // Pasos temporales
 double t_final = 26000.0;
 
 // Tomando delta_y igual a delta_x se reduce la complejidad del código.
@@ -25,9 +25,17 @@ std::array<std::array<double, N>, N> T_p; // T presente
 
 void guardado(int condicion_frontera){
     // Condiciones iniciales
+    int arriba = 0.4*N;
+    int abajo = 0.2*N;
+    int derecha = 0.6*N;
+    int izquierda = 0.4*N;
+    std::cout << arriba << std::endl;
+    std::cout << abajo << std::endl;
+    std::cout << derecha << std::endl;
+    std::cout << izquierda << std::endl;
     for (int i = 0; i<N; i++){
         for (int k = 0; k<N; k++){
-            if (k <= 3 && k >=2 && i<= 5 && i>=4){
+            if (k <= arriba && k >= abajo && i <= derecha && i>= izquierda){
                 T_p[i][k] = 100.0;
             }
             else{
@@ -145,7 +153,7 @@ void guardado(int condicion_frontera){
         }
         
         // Guardar algunos arreglos cada 100 segundos en 'C2_EDP.dat'
-        if (j%5 == 0){
+        if (j%500 == 0){
             for(int p=0; p<N;p++){
                 for (int q=0; q<N;q++){
                     outfile << T_p[p][q] << ",";
